@@ -5,6 +5,6 @@
 source(system.file("test-tools-1.R", package = "Matrix", lib.loc = .Library),
        keep.source = FALSE)
 
-if(doExtras <- cluster:::doExtras())## from ../R/0aaa.R
-    cat("doExtras <- cluster:::doExtras() :  TRUE\n")
+if(doExtras <- parallelCluster:::doExtras())## from ../R/0aaa.R
+    cat("doExtras <- parallelCluster:::doExtras() :  TRUE\n")
 

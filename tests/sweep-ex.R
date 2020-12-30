@@ -23,7 +23,7 @@ sweep1 <- function(cov, i, det = 1)
     if(0 > (i <- as.integer(i)) || i > nord)
         stop("'i' must be in 0:nord, where nord = nrow(cov)-1")
     storage.mode(cov) <- "double"
-    .C(cluster:::cl_sweep,
+    .C(parallelCluster:::cl_sweep,
        cov,
        nord,
        ixlo = 0:0,
@@ -44,7 +44,7 @@ sweepAll <- function(cov, det = 1)
         stop("'cov' must be at least 2 x 2")
     storage.mode(cov) <- "double"
     for(i in 0:nord) {
-	.C(cluster:::cl_sweep,
+	.C(parallelCluster:::cl_sweep,
 	   cov,
 	   nord,
 	   ixlo = 0:0,
@@ -57,7 +57,7 @@ sweepAll <- function(cov, det = 1)
     list(cov = cov, deter = det)
 }
 
-require(cluster)
+require(parallelCluster)
 
 ## Examples with errors
 m1 <- cov(cbind(1, 1:5))

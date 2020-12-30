@@ -1,3 +1,15 @@
+[1.0.0] - 2020-12-30
+
+- Added:
+  - Added a RcppEigen-based matrix multiplication function to speed up many functions
+  - Added a `parallel` option to `clusGap()`, which when true, (currently) uses
+    `BiocParallel::bplapply()` to parallelize
+
+- Changed:
+  - Reformatted DECRIPTION, NAMESPACE, and various manual files to be generated
+    by roxygen2::roxygenize()
+  - Swapped out `base::svd()` for `irlba::irlba()`
+
 2014-03-27  Martin Maechler
 
 	* NOTE: All newer changes are summarized in the NEWS file

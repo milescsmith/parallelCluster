@@ -1,9 +1,9 @@
 ## For different cluster versions
 
-require(cluster)
+require(parallelCluster)
 
 if(interactive()) {
-    (pkgPath <- .find.package("cluster", verbose = TRUE))
+    (pkgPath <- .find.package("parallelCluster", verbose = TRUE))
     (verC <- readLines(Dfile <- file.path(pkgPath, "DESCRIPTION"), n = 2)[2])
 }
 

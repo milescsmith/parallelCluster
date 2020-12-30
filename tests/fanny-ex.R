@@ -1,5 +1,5 @@
 .libPaths() # show full library tree {also as check of R CMD check!}
-library(cluster)
+library(parallelCluster)
 
 ####---------- Tests for FANNY  i.e., fanny() --------------------------
 ####

@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 ### clusplot() & pam() RESULT checking ...
 

@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 tools::assertWarning(eh <- ellipsoidhull(cbind(x=1:4, y = 1:4)), verbose=TRUE) #singular
 eh ## center ok, shape "0 volume" --> Warning

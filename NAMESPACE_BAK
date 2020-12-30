@@ -1,0 +1,3 @@
+useDynLib(parallelCluster)
+import(RcppEigen)
+importFrom(Rcpp, evalCpp)

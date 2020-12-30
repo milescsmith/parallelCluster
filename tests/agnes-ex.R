@@ -1,8 +1,8 @@
-library(cluster)
+library(parallelCluster)
 options(digits = 6)
 data(votes.repub)
 
-source(system.file("test-tools.R", package = "cluster"), keep.source = FALSE)
+source(system.file("test-tools.R", package = "parallelCluster"), keep.source = FALSE)
 ## -> showProc.time() ...  & doExtras
 
 agn1 <- agnes(votes.repub, metric = "manhattan", stand = TRUE)

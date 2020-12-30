@@ -1,8 +1,8 @@
 ## This came from a bug report on R-help by ge yreyt <tothri2000@yahoo.ca>
 ## Date: Mon, 9 Jun 2003 16:06:53 -0400 (EDT)
-library(cluster)
+library(parallelCluster)
 if(FALSE) # manual testing
-library(cluster, lib="~/R/Pkgs/cluster.Rcheck")
+library(parallelCluster, lib="~/R/Pkgs/parallelCluster.Rcheck")
 
 data(iris)
 

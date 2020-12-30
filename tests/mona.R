@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 if(getRversion() < "3.4.0") source("withAutoprint.R")
 

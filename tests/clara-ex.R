@@ -1,9 +1,9 @@
 #### These are *NOT* compared with output in the released version of
 ###  'cluster'  currently
 
-library(cluster)
+library(parallelCluster)
 
-source(system.file("test-tools.R", package = "cluster"), keep.source = FALSE)
+source(system.file("test-tools.R", package = "parallelCluster"), keep.source = FALSE)
 ## -> showProc.time() ...  & doExtras
 
 data(xclara)

@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 options(digits = 6)
 data(votes.repub)
 di.votes <- daisy(votes.repub)

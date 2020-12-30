@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 x <- cbind(c(0, -4, -22, -14, 0, NA, -28, 1, 10, -1,
              100 + c(13, 0, 2, 4, 7, 8, 1)),

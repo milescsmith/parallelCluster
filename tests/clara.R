@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 ## generate 1500 objects, divided into 2 clusters.
 suppressWarnings(RNGversion("3.5.0")) # << as long as we don't have R >= 3.6.0

@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 
 ## Kind of a bootstrap -- calling many diana()s
 dianaBoot <- function(data, B = 500, frac.sub = c(0.7, min = 0.2),

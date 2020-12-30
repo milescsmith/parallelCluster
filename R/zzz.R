@@ -1,6 +1,5 @@
-.onUnload <- function(libpath)
-{
-    library.dynam.unload("cluster", libpath)
+.onUnload <- function(libpath) {
+  library.dynam.unload("parallelCluster", libpath)
 }
 
 ## no S4 methodology here; speedup :

@@ -1,4 +1,4 @@
-library(cluster)
+library(parallelCluster)
 ## Compare on these:
 nms <- c("clustering", "objective", "isolation", "clusinfo", "silinfo")
 nm2 <- c("medoids", "id.med", nms)
