@@ -1,3 +1,18 @@
+[1.1.0] - 2020-12-30
+
+- Changed:
+  - Replaced the whole `apply_fun` mess with just using `future_map()` for all.
+    Parallelization is determined by the future::plan that is selected (which,
+    in the absence of "parallel = TRUE", is set to `sequential`)
+
+- Removed:
+  - Moved the RcppEigen-based stuff to its own package
+
+[1.0.1] - 2020-12-30
+
+- Fixed:
+  - Forgot to negate the test to see if B is an integer in `clustGap`
+
 [1.0.0] - 2020-12-30
 
 - Added:

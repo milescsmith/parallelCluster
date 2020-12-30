@@ -24,11 +24,12 @@
 #' @param spaceH0
 #' @param verbose
 #' @param parallel
-#' @param BPPARAM
+#' @param plan plan for resolving parallel futures (e.g. how should certain parallel calculations be performed).
+#' See \code{future::plan} for acceptable options.  Default: "multisession"
 #' @param ...
 #'
-#' @importFrom irlba irlba
-#'
+#' @importFrom rsvd rsvd
+#' @importFrom FasterMatrixMath MatMult
 #'
 #' @return
 #' @export
@@ -43,7 +44,7 @@ clusGap <- function(
                     spaceH0 = c("scaledPCA", "original"),
                     verbose = interactive(),
                     parallel = FALSE,
-                    BPPARAM = bpparam(),
+                    future_plan = "multisession",
                     ...) {
   stopifnot(
     is.function(FUNcluster),
@@ -53,15 +54,15 @@ clusGap <- function(
     ncol(x) >= 1
   )
 
-  if (is.integer(as.integer(B)) || as.integer(B) <= 0) {
+  if (!is.integer(as.integer(B)) || as.integer(B) <= 0) {
     stop("'B' has to be a positive integer")
   }
   cl. <- match.call()
 
-  apply_fun <- lapply
-
   if (isTRUE(parallel)) {
-    apply_fun <- bplapply
+    plan(future_plan)
+  } else {
+    plan(sequential)
   }
 
   if (is.data.frame(x)) {
@@ -70,7 +71,7 @@ clusGap <- function(
 
   W.k <- function(X, kk) {
     clus <- if (kk > 1) {
-      FUNcluster(X, kk, ...)[["cluster"]]
+      FUNcluster(X, kk, ...)$cluster
     } else {
       rep.int(1L, nrow(X))
     }
@@ -93,9 +94,11 @@ clusGap <- function(
   #     logW[k] <- log(W.k(x, k))
   logW <-
     unlist(
-      apply_fun(1:K.max, function(k) {
-        log(W.k(x, k))
-        }
+      future_map(
+        .x = seq(1,K.max),
+        .f = ~ log(W.k(x, .x)),
+        .progress = TRUE,
+        .options = furrr_options(seed = TRUE, scheduling = 1)
         )
       )
 
@@ -118,8 +121,9 @@ clusGap <- function(
     EXPR = spaceH0,
     "scaledPCA" = {
       ## (These & (xs,m.x) above basically do stats:::prcomp.default()
-      V.sx <- irlba(xs, nv = min(dim(xs)), nu = 0)$v
-      xs <- eigenMapMatMult(xs, V.sx) # = transformed(x)
+      # V.sx <- svd(xs, nu = 0)$v
+      V.sx <- -rsvd(xs, nv = min(dim(xs)), nu = 0)$v
+      xs <- FasterMatrixMath::MatMult(A = xs, B = V.sx) # = transformed(x)
     },
     "original" = {}, # (do nothing, use 'xs')
     ## otherwise
@@ -136,7 +140,7 @@ clusGap <- function(
     )
   }
 
-  logWksList <- apply_fun(X = seq(1,B), BPPARAM = BPPARAM, FUN = function(b) {
+  logWksList <- future_map(.x = seq(1,B), .f = function(b) {
     ## Generate "H0"-data as "parametric bootstrap sample" :
     z1 <- apply(rng.x1, 2,
       function(M, nn) {
@@ -156,7 +160,8 @@ clusGap <- function(
     # for(k in 1:K.max) {
     #     logWks[b,k] <- log(W.k(z, k))
     # if(verbose) cat(".", if(b %% 50 == 0) paste(b,"\n"))
-  })
+  }, .progress = TRUE, .options = furrr_options(seed = TRUE))
+
   logWks <-
     matrix(
       unlist(logWksList),

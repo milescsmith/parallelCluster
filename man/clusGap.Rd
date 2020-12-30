@@ -13,12 +13,15 @@ clusGap(
   spaceH0 = c("scaledPCA", "original"),
   verbose = interactive(),
   parallel = FALSE,
-  BPPARAM = bpparam(),
+  future_plan = "multisession",
   ...
 )
 }
 \arguments{
 \item{...}{}
+
+\item{plan}{plan for resolving parallel futures (e.g. how should certain parallel calculations be performed).
+See \code{future::plan} for acceptable options.  Default: "multisession"}
 }
 \value{
 
