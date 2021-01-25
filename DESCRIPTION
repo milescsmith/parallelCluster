@@ -27,6 +27,7 @@ Imports:
     grDevices,
     stats,
     rsvd,
+    FasterMatrixMath,
     future,
     furrr,
     utils
