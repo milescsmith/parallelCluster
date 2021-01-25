@@ -29,7 +29,8 @@
 #' @param ...
 #'
 #' @importFrom rsvd rsvd
-#' @importFrom FasterMatrixMath MatMult
+#' @importFrom FasterMatrixMath MatMult MatCross MatTCross
+#' @importFrom matrixStats colMeans2
 #'
 #' @return
 #' @export
@@ -123,7 +124,7 @@ clusGap <- function(
       ## (These & (xs,m.x) above basically do stats:::prcomp.default()
       # V.sx <- svd(xs, nu = 0)$v
       V.sx <- -rsvd(xs, nv = min(dim(xs)), nu = 0)$v
-      xs <- FasterMatrixMath::MatMult(A = xs, B = V.sx) # = transformed(x)
+      xs <- MatMult(A = xs, B = V.sx) # = transformed(x)
     },
     "original" = {}, # (do nothing, use 'xs')
     ## otherwise
@@ -151,10 +152,10 @@ clusGap <- function(
     z <-
       switch(
         spaceH0,
-        "scaledPCA" = tcrossprod(z1, V.sx), # back transformed
+        "scaledPCA" = MatTCross(z1, V.sx), # back transformed
         "original" = z1
       ) + m.x
-    curLogWks <- unlist(lapply(1:K.max, function(k) log(W.k(z, k))))
+    curLogWks <- unlist(lapply(seq(1,K.max), function(k) log(W.k(z, k))))
     if (verbose && !parallel) cat(".", if (b %% 50 == 0) paste(b, "\n"))
     curLogWks
     # for(k in 1:K.max) {
@@ -170,7 +171,7 @@ clusGap <- function(
     )
 
   if (verbose && (B %% 50 != 0)) cat("", B, "\n")
-  E.logW <- colMeans(logWks)
+  E.logW <- colMeans2(logWks)
   SE.sim <- sqrt((1 + 1 / B) * apply(logWks, 2, var))
   structure(
     class = "clusGap",
@@ -200,19 +201,33 @@ clusGap <- function(
 ## nclust <- min(which(y[,"Gap"] > crit))
 ## return(ifelse(nclust == nrow(y), NA, nclust))
 
-maxSE <- function(f, SE.f,
+maxSE <- function(
+                  f,
+                  SE.f,
                   method = c(
                     "firstSEmax", "Tibs2001SEmax",
                     "globalSEmax", "firstmax", "globalmax"
                   ),
                   SE.factor = 1) {
+
   method <- match.arg(method)
-  stopifnot((K <- length(f)) >= 1, K == length(SE.f), SE.f >= 0, SE.factor >= 0)
+
+  stopifnot(
+    (K <- length(f)) >= 1,
+    K == length(SE.f),
+    SE.f >= 0,
+    SE.factor >= 0
+    )
+
   fSE <- SE.factor * SE.f
   switch(method,
     "firstmax" = { ## the first local maximum  (== firstSEmax with SE.factor == 0)
       decr <- diff(f) <= 0 # length K-1
-      if (any(decr)) which.max(decr) else K # the first TRUE, or K
+      if (any(decr)) {
+        which.max(decr)
+      } else {
+        K
+      } # the first TRUE, or K
     },
     "globalmax" = {
       which.max(f)
@@ -220,7 +235,11 @@ maxSE <- function(f, SE.f,
     "Tibs2001SEmax" = { ## The one Tibshirani et al (2001) proposed:
       ## "the smallest k such that f(k) >= f(k+1) - s_{k+1}"
       g.s <- f - fSE
-      if (any(mp <- f[-K] >= g.s[-1])) which.max(mp) else K
+      if (any(mp <- f[-K] >= g.s[-1])) {
+        which.max(mp)
+      } else {
+        K
+      }
     },
     "firstSEmax" = { ## M.Maechler(2012): rather ..
       ## look at the first *local* maximum and then to the left ..:
