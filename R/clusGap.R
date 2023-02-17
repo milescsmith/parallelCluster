@@ -31,6 +31,8 @@
 #' @importFrom rsvd rsvd
 #' @importFrom FasterMatrixMath MatMult MatCross MatTCross
 #' @importFrom matrixStats colMeans2
+#' @importFrom future plan sequential
+#' @importFrom furrr future_map furrr_options
 #'
 #' @return
 #' @export
@@ -141,10 +143,10 @@ clusGap <- function(
     )
   }
 
-  logWksList <- future_map(.x = seq(1,B), .f = function(b) {
+  logWksList <- future_map(.x = seq(1,B), .f = \(b) {
     ## Generate "H0"-data as "parametric bootstrap sample" :
     z1 <- apply(rng.x1, 2,
-      function(M, nn) {
+      \(M, nn) {
         runif(nn, min = M[1], max = M[2])
         },
       nn = n
@@ -278,23 +280,30 @@ print.clusGap <- function(x, method = "firstSEmax", SE.factor = 1, ...) {
     f = T[, "gap"], SE.f = T[, "SE.sim"],
     method = method, SE.factor = SE.factor
   )
-  cat(sprintf(
-    " --> Number of clusters (method '%s'%s): %d\n",
-    method, if (grepl("SE", method)) {
-      sprintf(", SE.factor=%g", SE.factor)
-    } else {
-      ""
-    }, nc
-  ))
+  cat(
+    sprintf(
+      " --> Number of clusters (method '%s'%s): %d\n",
+      method, if (grepl("SE", method)) {
+        sprintf(", SE.factor=%g", SE.factor)
+      } else {
+        ""
+      }, nc
+    )
+  )
   print(T, ...)
   invisible(x)
 }
 
-plot.clusGap <- function(x, type = "b", xlab = "k", ylab = expression(Gap[k]),
-                         main = NULL,
-                         do.arrows = TRUE,
-                         arrowArgs = list(col = "red3", length = 1 / 16, angle = 90, code = 3),
-                         ...) {
+plot.clusGap <- function(
+  x,
+  type = "b",
+  xlab = "k",
+  ylab = expression(Gap[k]),
+  main = NULL,
+  do.arrows = TRUE,
+  arrowArgs = list(col = "red3", length = 1 / 16, angle = 90, code = 3),
+  ...
+) {
   stopifnot(is.matrix(Tab <- x$Tab), is.numeric(Tab))
   K <- nrow(Tab)
   k <- seq_len(K) # == 1,2,... k
