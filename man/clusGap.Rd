@@ -23,9 +23,6 @@ clusGap(
 \item{plan}{plan for resolving parallel futures (e.g. how should certain parallel calculations be performed).
 See \code{future::plan} for acceptable options.  Default: "multisession"}
 }
-\value{
-
-}
 \description{
-
+clusGap
 }
